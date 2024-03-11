@@ -10,11 +10,12 @@ header>h1 {
     padding: 10px;
     text-align: center;
 }
-.cv{
+
+.cv {
     color: #fff;
 }
 
-.c{
+.c {
     color: black;
 }
 
@@ -97,18 +98,35 @@ footer {
     background-color: #333;
 }
 
-.men>a {
-    color: #fff;
-    margin: 20px 5px 10px 15px;
+.men div {
+    padding: 10px;
+    border: 1px solid rgb(255, 255, 255);
+    margin: 10px;
+    text-align: center;
+    width: 120px;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
 }
+
+.men div:hover {
+    background-color: #272727;
+}
+
+.men {
+    display: flex;
+    flex-direction: row;
+}
+
 
 .photo {
     overflow: hidden;
 }
 
 .photo:hover img {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
+
 ::selection {
-    background-color:#febe98;
+    background-color: #febe98;
 }
