@@ -64,6 +64,7 @@ footer {
 .auto {
     cursor: auto;
 }
+
 .cursors {
     flex-wrap: wrap;
 }
@@ -85,7 +86,8 @@ footer {
     background-color: #333;
 }
 
-.a {
+.men>a {
     color: #fff;
     margin: 20px 5px 10px 15px;
 }
+
