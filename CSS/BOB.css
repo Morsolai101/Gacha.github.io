@@ -4,7 +4,7 @@ body {
     padding: 0;
 }
 
-header > h1 {
+header>h1 {
     background-color: #333;
     color: #fff;
     padding: 10px;
@@ -59,4 +59,24 @@ footer {
     color: #fff;
     padding: 10px;
     text-align: center;
+}
+
+.auto {
+    cursor: auto;
+}
+.cursors {
+    flex-wrap: wrap;
+}
+
+.cursors>div {
+    flex: 150px;
+    padding: 10px 2px;
+    white-space: nowrap;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin: 0 5px 5px 0;
+}
+
+.cursors>div:hover {
+    background: #eee;
 }
