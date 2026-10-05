@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вивчення англійських слів</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #2d3748;
+  }
+  .container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 560px;
+    padding: 40px 30px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 22px;
+    color: #4a5568;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: #a0aec0;
+    margin-bottom: 25px;
+  }
+  .progress-bar {
+    background: #edf2f7;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 25px;
+  }
+  .progress-fill {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    font-size: 14px;
+    color: #718096;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #4a5568;
+    display: block;
+  }
+  .card {
+    background: linear-gradient(135deg, #f6f8fc 0%, #edf2f7 100%);
+    border-radius: 16px;
+    padding: 50px 20px;
+    margin-bottom: 25px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid #e2e8f0;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .word {
+    font-size: 38px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 15px;
+    word-break: break-word;
+  }
+  .translation {
+    font-size: 20px;
+    color: #667eea;
+    font-weight: 500;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px dashed #cbd5e0;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .translation.show { display: block; }
+  .hint {
+    font-size: 13px;
+    color: #a0aec0;
+    margin-top: 15px;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  button {
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-show {
+    grid-column: span 2;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+  }
+  .btn-show:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+  .btn-again { background: #fed7d7; color: #c53030; }
+  .btn-again:hover:not(:disabled) { background: #fc8181; color: #fff; }
+  .btn-good { background: #c6f6d5; color: #276749; }
+  .btn-good:hover:not(:disabled) { background: #68d391; color: #fff; }
+  .btn-easy { background: #bee3f8; color: #2c5282; grid-column: span 2; }
+  .btn-easy:hover:not(:disabled) { background: #63b3ed; color: #fff; }
+  .finished {
+    display: none;
+    padding: 40px 20px;
+  }
+  .finished h2 { color: #48bb78; margin-bottom: 15px; font-size: 28px; }
+  .finished p { color: #718096; margin-bottom: 25px; }
+  .btn-restart {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    padding: 14px 32px;
+    font-size: 16px;
+  }
+  .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+  .mode-switch {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .mode-switch button {
+    padding: 8px 16px;
+    font-size: 13px;
+    background: #edf2f7;
+    color: #4a5568;
+    border-radius: 20px;
+  }
+  .mode-switch button.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎯 Вивчення англійських слів</h1>
+  <p class="subtitle">Техніка інтервального повторення</p>
+
+  <div id="app">
+    <div class="mode-switch" id="modeSwitch">
+      <button data-mode="en-uk" class="active">EN → UK</button>
+      <button data-mode="uk-en">UK → EN</button>
+      <button data-mode="mixed">Мішаний</button>
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="stats">
+      <div><span class="stat-value" id="statLearned">0</span>Вивчено</div>
+      <div><span class="stat-value" id="statRemaining">0</span>Залишилось</div>
+      <div><span class="stat-value" id="statTotal">0</span>Всього</div>
+    </div>
+
+    <div class="card" id="card">
+      <div class="word" id="word">—</div>
+      <div class="translation" id="translation">—</div>
+      <div class="hint" id="hint">Натисніть, щоб побачити переклад</div>
+    </div>
+
+    <div class="buttons" id="buttons">
+      <button class="btn-show" id="btnShow">Показати переклад</button>
+      <button class="btn-again" id="btnAgain" disabled>🔁 Ще раз</button>
+      <button class="btn-good" id="btnGood" disabled>✓ Знаю</button>
+      <button class="btn-easy" id="btnEasy" disabled>⚡ Легко</button>
+    </div>
+  </div>
+
+  <div class="finished" id="finished">
+    <h2>🎉 Вітаємо!</h2>
+    <p>Ви пройшли всі слова в цій сесії.</p>
+    <button class="btn-restart" onclick="restart()">Почати знову</button>
+  </div>
+</div>
+
+<script>
+// Словник
+const WORDS = [
+  { en: "to agree", uk: "погоджуватися" },
+  { en: "to aim", uk: "мати наміром, намагатися, цілитися" },
+  { en: "to appear", uk: "виявлятися, виявитися" },
+  { en: "to arrange", uk: "домовлятися, урегулювати" },
+  { en: "to ask", uk: "просити" },
+  { en: "to attempt", uk: "намагатися" },
+  { en: "to be able", uk: "бути в змозі, могти" },
+  { en: "to beg", uk: "просити, благати" },
+  { en: "to begin", uk: "починати" },
+  { en: "to care", uk: "хотіти, мати бажання" },
+  { en: "to choose", uk: "вибирати" },
+  { en: "to claim", uk: "заявляти, стверджувати" },
+  { en: "to dare", uk: "наважуватися, сміти, мати сміливість" },
+  { en: "to decide", uk: "вирішити, прийняти рішення" },
+  { en: "to demand", uk: "вимагати, просити" },
+  { en: "to deserve", uk: "заслуговувати" },
+  { en: "to dread", uk: "боятися, жахатися" },
+  { en: "to expect", uk: "очікувати" },
+  { en: "to fail", uk: "зазнавати невдачі, провалюватися, не зробити" },
+  { en: "to get", uk: "отримати дозвіл, мати потребу" },
+  { en: "to happen", uk: "виявитися, статися" },
+  { en: "to hesitate", uk: "вагатися, не наважуватися" },
+  { en: "to hope", uk: "сподіватися" },
+  { en: "to hurry", uk: "поспішати" },
+  { en: "to intend", uk: "мати намір, збиратися" },
+  { en: "to learn", uk: "вчитися" },
+  { en: "to manage", uk: "впоратися, зуміти" },
+  { en: "to need", uk: "потребувати, мати потребу" },
+  { en: "to neglect", uk: "забувати, не зробити, нехтувати" },
+  { en: "to plan", uk: "планувати" },
+  { en: "to prepare", uk: "приготуватися" },
+  { en: "to pretend", uk: "робити вигляд, прикидатися" },
+  { en: "to proceed", uk: "перейти до, продовжувати" },
+  { en: "to promise", uk: "обіцяти" },
+  { en: "to refuse", uk: "відмовлятися" },
+  { en: "to seem", uk: "здаватися, мати вигляд" },
+  { en: "to strive", uk: "намагатися, докладати зусилля" },
+  { en: "to swear", uk: "клястися" },
+  { en: "to tend", uk: "мати тенденцію, схилятись, прагнути" },
+  { en: "to threaten", uk: "погрожувати, залякувати" },
+  { en: "to vow", uk: "давати обітницю, клястися" },
+  { en: "to wait", uk: "чекати" },
+  { en: "to want", uk: "хотіти" },
+  { en: "to wish", uk: "хотіти, бажати" }
+];
+
+// Стан
+let mode = 'en-uk';
+let queue = [];      // черга слів у сесії
+let current = null;  // поточне слово
+let learned = 0;     // вивчено (знаю / легко)
+let total = WORDS.length;
+let revealed = false;
+
+// DOM
+const $ = id => document.getElementById(id);
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function updateStats() {
+  $('statLearned').textContent = learned;
+  $('statRemaining').textContent = queue.length + (current ? 1 : 0);
+  $('statTotal').textContent = total;
+  const pct = total === 0 ? 0 : Math.round((learned / total) * 100);
+  $('progressFill').style.width = pct + '%';
+}
+
+function pickDirection() {
+  if (mode === 'mixed') return Math.random() < 0.5 ? 'en-uk' : 'uk-en';
+  return mode;
+}
+
+function nextCard() {
+  if (queue.length === 0) {
+    showFinished();
+    return;
+  }
+  current = queue.shift();
+  revealed = false;
+
+  const dir = pickDirection();
+  const wordEl = $('word');
+  const transEl = $('translation');
+
+  if (dir === 'en-uk') {
+    wordEl.textContent = current.en;
+    transEl.textContent = current.uk;
+  } else {
+    wordEl.textContent = current.uk;
+    transEl.textContent = current.en;
+  }
+
+  transEl.classList.remove('show');
+  $('hint').style.display = 'block';
+
+  $('btnShow').disabled = false;
+  $('btnAgain').disabled = true;
+  $('btnGood').disabled = true;
+  $('btnEasy').disabled = true;
+
+  updateStats();
+}
+
+function reveal() {
+  if (revealed) return;
+  revealed = true;
+  $('translation').classList.add('show');
+  $('hint').style.display = 'none';
+  $('btnShow').disabled = true;
+  $('btnAgain').disabled = false;
+  $('btnGood').disabled = false;
+  $('btnEasy').disabled = false;
+}
+
+function answer(quality) {
+  // quality: 'again' | 'good' | 'easy'
+  if (quality === 'again') {
+    // повертаємо в кінець черги (через 3 позиції)
+    const pos = Math.min(3, queue.length);
+    queue.splice(pos, 0, current);
+  } else if (quality === 'good') {
+    // через 5 позицій
+    const pos = Math.min(5, queue.length);
+    queue.splice(pos, 0, current);
+  } else {
+    // 'easy' — вважаємо вивченим
+    learned++;
+  }
+  current = null;
+  nextCard();
+}
+
+function showFinished() {
+  $('app').style.display = 'none';
+  $('finished').style.display = 'block';
+  updateStats();
+}
+
+function restart() {
+  queue = shuffle(WORDS);
+  current = null;
+  learned = 0;
+  total = WORDS.length;
+  $('app').style.display = 'block';
+  $('finished').style.display = 'none';
+  nextCard();
+}
+
+// Обробники
+$('card').addEventListener('click', () => { if (!revealed) reveal(); });
+$('btnShow').addEventListener('click', reveal);
+$('btnAgain').addEventListener('click', () => answer('again'));
+$('btnGood').addEventListener('click', () => answer('good'));
+$('btnEasy').addEventListener('click', () => answer('easy'));
+
+document.querySelectorAll('#modeSwitch button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#modeSwitch button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.mode;
+  });
+});
+
+// Клавіатура: Space = показати, 1/2/3 = відповіді
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); if (!revealed && current) reveal(); }
+  if (e.key === '1' && revealed) answer('again');
+  if (e.key === '2' && revealed) answer('good');
+  if (e.key === '3' && revealed) answer('easy');
+});
+
+// Старт
+restart();
+</script>
+</body>
+</html>
